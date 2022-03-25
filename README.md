@@ -1,7 +1,9 @@
 # ESL_back
+
 ## Data Model
+
 <br />
-For Rental Car application we’ll need to persist data about potential users and cars offered 
+For Rental Car application we’ll need to persist data about potential users and cars offered
 
 DB → Dynamo DB
 
@@ -12,69 +14,91 @@ Dynamo DB is the chosen tech to store the data because it is easy to scale, flex
 **SK**: sort key
 
 ### Entity Model:
+
 <br />
 
-**Reservation** 
+**Reservation**
 
-- ReservationId (PK) 
-- userId(SK) 
-- carId 
-- start date 
+- ReservationId (PK)
+- userId(SK)
+- carId
+- status
+- start date
 - end date
 - register Date
 
-**User** 
+**User**
 
-- userId (PK) 
+- userId (PK)
 - name
+- id
 - is admin
-- email 
-- age 
+- email
+- age
 - register date
 
-**Car** 
+**Car**
 
-- carId (PK) 
-- brand  (SK)
-- model 
-- license 
+- carId (PK)
+- brand (SK)
+- model
+- license
 - pictures (object key + bucket where car’s pictures are stored)
 - register date
 
 <br />
 
 ## API Design
+
 <br />
 
 ## User
+
 ---
 
-**POST /v1/user**
+**POST /v1/users**
 <br />
->Create User
+
+> Create User
 
 ---
+
 ---
 
-**GET /v1/user/:id**
+**GET /v1/users**
 <br />
->Get User information
+
+> Get All Users information
 
 ---
+
 ---
 
-**PUT /v1/user/:id**
+**GET /v1/users/:userid**
 <br />
->Update User
+
+> Get User information
 
 ---
+
 ---
 
-**DELETE /v1/user/:id**
+**PUT /v1/user/:userid**
 <br />
->Delete User
+
+> Update User
 
 ---
+
+---
+
+**DELETE /v1/user/:userid**
+<br />
+
+> Delete User
+
+---
+
 <br />
 <br />
 
@@ -82,30 +106,46 @@ Dynamo DB is the chosen tech to store the data because it is easy to scale, flex
 
 ---
 
-**POST /v1/car**
+**POST /v1/cars**
 <br />
->Create car
+
+> Create car
 
 ---
+
 ---
 
-**GET /v1/car/:carid**
+**GET /v1/cars**
 <br />
->Get car information
+
+> Get all cars information
 
 ---
+
+---
+
+**GET /v1/cars/:carid**
+<br />
+
+> Get car information
+
+---
+
 ---
 
 **PUT /v1/car/:carid**
 <br />
->Update car
+
+> Update car
 
 ---
+
 ---
 
 **DELETE /v1/car/:carid**
 <br />
->Delete car
+
+> Delete car
 
 ---
 
@@ -113,40 +153,48 @@ Dynamo DB is the chosen tech to store the data because it is easy to scale, flex
 <br />
 
 ## Reservations
+
+## <br />
+
+**POST /v1/car/:carid/reservations**
 <br />
+
+> Create reservation for a car
+
 ---
 
-**POST /v1/car/:carid/reservation**
+---
+
+**GET /v1/car/:carid/reservations**
 <br />
->Create reservation for a car
+
+> Get all reservations on car
 
 ---
+
 ---
 
-**GET /v1/car/:carid/reservation**
+**GET /v1/car/:carid/reservations/:reservationid**
 <br />
->Get all reservations on car
+
+> Get reservation by carid
 
 ---
+
 ---
 
-**GET /v1/car/:carid/reservation/:reservationid**
+**PUT /v1/car/:carid/reservations/:reservationid**
 <br />
->Get reservation by carid
+
+> Update reservation by id
 
 ---
+
 ---
 
-**PUT /v1/car/:carid/reservation/:reservationid**
+**DELETE /v1/car/:carid/reservations/:reservationid**
 <br />
->Update reservation by id
+
+> Delete reservation by id
 
 ---
----
-
-**DELETE /v1/car/:carid/reservation/:reservationid**
-<br />
->Delete reservation by id
-
----
-

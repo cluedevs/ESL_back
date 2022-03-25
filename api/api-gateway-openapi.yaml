@@ -1,0 +1,532 @@
+openapi: 3.0.0
+info:
+  title: RentalCar
+  description: The Open API specification for Rental car service
+  version: 1.0.0
+  contact:
+    email: "ederfduran@gmail.com"
+servers:
+  - url: "https://vwe874p0fi.execute-api.us-west-2.amazonaws.com"
+
+paths:
+  /api/v1/users:
+    get:
+      summary: Get all users data
+      description: Get all users data
+      responses:
+        "200":
+          description: List of all users
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getUsersLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    post:
+      summary: Create new user
+      description: Create new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Existing User
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "201":
+          description: Newly created User
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${createUserLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /api/v1/users/{userId}:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+
+    get:
+      summary: Get user data
+      description: Get user data
+      responses:
+        "200":
+          description: One user data
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getUserLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    put:
+      summary: Update User data
+      description: Update User data
+      responses:
+        "200":
+          description: Update one user
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${putUserLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    delete:
+      summary: Delete user data
+      description: Delete user data
+      responses:
+        "204":
+          description: Delete one user
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${deleteUserLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /api/v1/cars:
+    get:
+      summary: Get all cars data
+      description: Get all cars data
+      responses:
+        "200":
+          description: List of all cars
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cars"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getCarsLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    post:
+      summary: Create new car
+      description: Create new car
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Car"
+      responses:
+        "200":
+          description: Existing Car
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+        "201":
+          description: Newly created Car
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${createCarLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /api/v1/cars/{carId}:
+    parameters:
+      - $ref: "#/components/parameters/carId"
+
+    get:
+      summary: Get car data
+      description: Get car data
+      responses:
+        "200":
+          description: One car data
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getCarLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    put:
+      summary: Update Car data
+      description: Update Car data
+      responses:
+        "200":
+          description: Update one car
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${putCarLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    delete:
+      summary: Delete car data
+      description: Delete car data
+      responses:
+        "204":
+          description: Delete one car
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${deleteCarLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /api/v1/cars/{carId}/reservations:
+    parameters:
+      - $ref: "#/components/parameters/carId"
+
+    get:
+      summary: Get all car reservations data
+      description: Get all car reservations data
+      responses:
+        "200":
+          description: return all car reservations
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservations"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getCarReservationsLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    post:
+      summary: Create new car reservation
+      description: Create new car reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reservation"
+      responses:
+        "200":
+          description: Existing Reservation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+        "201":
+          description: Newly created Car Reservation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${createCarReservationLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /api/v1/cars/{carId}/reservations/{reservationId}:
+    parameters:
+      - $ref: "#/components/parameters/carId"
+      - $ref: "#/components/parameters/reservationId"
+
+    get:
+      summary: Get car reservation data
+      description: Get car reservation data
+      responses:
+        "200":
+          description: One car reservation data
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getCarReservationLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    put:
+      summary: Update Car reservation data
+      description: Update Car reservation data
+      responses:
+        "200":
+          description: Update one car reservation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reservation"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${putCarReservationLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+    delete:
+      summary: Delete car reservation data
+      description: Delete car reservation data
+      responses:
+        "204":
+          description: Delete one car reservation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${deleteCarReservationLambdaFunctionArn}/invocations"
+        responses:
+          default:
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+components:
+  parameters:
+    userId:
+      name: userId
+      description: Unique identifier for the user
+      in: path
+      required: true
+      schema:
+        type: string
+
+    carId:
+      name: carId
+      description: Unique identifier for the car
+      in: path
+      required: true
+      schema:
+        type: string
+
+    reservationId:
+      name: reservationId
+      description: Unique identifier for the reservation
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    Empty:
+      title: "Empty Schema"
+      type: "object"
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+        isAdmin:
+          type: boolean
+        email:
+          type: string
+        age:
+          type: integer
+
+    Reservation:
+      type: object
+      properties:
+        reservationId:
+          type: string
+        userId:
+          type: string
+        carId:
+          type: string
+        status:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+
+    Car:
+      type: object
+      properties:
+        carId:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        license:
+          type: string
+        category:
+          type: string
+
+    Users:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        limit:
+          type: integer
+          example: 50
+
+    Cars:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Car"
+        limit:
+          type: integer
+          example: 50
+
+    Reservations:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reservation"
+        limit:
+          type: integer
+          example: 50
