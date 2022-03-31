@@ -1,0 +1,286 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Provisions Lambda function & IAM roles that will create S3 access points
+
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+
+  usersTableName:
+    Description: DynamoDB table to store users data
+    Type: String
+
+  writeUsersLambdaRoleArn:
+    Description: Role arn to write data on users table
+    Type: String
+
+  readUsersLambdaRoleArn:
+    Description: Role arn to read data on users table
+    Type: String
+
+  reservationsTableName:
+    Description: DynamoDB table to store reservations data
+    Type: String
+
+  writeReservationLambdaRoleArn:
+    Description: Role arn to write data on reservations table
+    Type: String
+
+  readReservationLambdaRoleArn:
+    Description: Role arn to read data on reservations table
+    Type: String
+
+  carsTableName:
+    Description: DynamoDB table to store reservations data
+    Type: String
+
+  writeCarLambdaRoleArn:
+    Description: Role arn to write data on reservations table
+    Type: String
+
+  readCarLambdaRoleArn:
+    Description: Role arn to read data on reservations table
+    Type: String
+
+Resources:
+  ## LAMBDA FUNCTION USER IMPLEMENTATIONS ##
+  ReadUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/user/get
+      FunctionName: !Sub "read-user-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref usersTableName
+      Description: Read user data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref readUsersLambdaRoleArn
+
+  CreateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/user/create
+      FunctionName: !Sub "create-user-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref usersTableName
+      Description: Creates new user Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeUsersLambdaRoleArn
+
+  UpdateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/user/update
+      FunctionName: !Sub "update-user-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref usersTableName
+      Description: Updates user data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeUsersLambdaRoleArn
+
+  DeleteUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/user/delete
+      FunctionName: !Sub "delete-user-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref usersTableName
+      Description: Creates new user Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeUsersLambdaRoleArn
+
+  ## LAMBDA FUNCTION RESERVATION IMPLEMENTATIONS ##
+  ReadReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/reservation/get
+      FunctionName: !Sub "read-reservation-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref reservationsTableName
+      Description: Read reservation data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref readReservationLambdaRoleArn
+
+  ReadAllCarReservations:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/reservation/getAll
+      FunctionName: !Sub "read-all-car-reservations-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref reservationsTableName
+      Description: Read reservation data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref readReservationLambdaRoleArn
+
+  CreateReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/reservation/create
+      FunctionName: !Sub "create-reservation-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref reservationsTableName
+      Description: Creates new reservation Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeReservationLambdaRoleArn
+
+  UpdateReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/reservation/update
+      FunctionName: !Sub "update-reservation-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref reservationsTableName
+      Description: Updates reservation data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeReservationLambdaRoleArn
+
+  DeleteReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/reservation/delete
+      FunctionName: !Sub "delete-reservation-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref reservationsTableName
+      Description: Creates new reservation Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeReservationLambdaRoleArn
+
+  ## LAMBDA FUNCTION CAR IMPLEMENTATIONS ##
+  ReadCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/car/get
+      FunctionName: !Sub "read-car-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref carsTableName
+      Description: Read car data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref readCarLambdaRoleArn
+
+  CreateCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/car/create
+      FunctionName: !Sub "create-car-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref carsTableName
+      Description: Creates new car Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeCarLambdaRoleArn
+
+  UpdateCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/car/update
+      FunctionName: !Sub "update-car-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref carsTableName
+      Description: Updates car data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeCarLambdaRoleArn
+
+  DeleteCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/car/delete
+      FunctionName: !Sub "delete-car-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE: !Ref carsTableName
+      Description: Creates new car Entity
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref writeCarLambdaRoleArn
+
+Outputs:
+  ReadUserLambdaArn:
+    Description: ARN of the ReadUser lambda
+    Value: !GetAtt ReadUser.Arn
+  CreateUserLambdaArn:
+    Description: ARN of the CreateUser lambda
+    Value: !GetAtt CreateUser.Arn
+  UpdateUserLambdaArn:
+    Description: ARN of the UpdateUser lambda
+    Value: !GetAtt UpdateUser.Arn
+  DeleteUserLambdaArn:
+    Description: ARN of the DeleteUser lambda
+    Value: !GetAtt DeleteUser.Arn
+
+  ReadReservationLambdaArn:
+    Description: ARN of the ReadReservation lambda
+    Value: !GetAtt ReadReservation.Arn
+  ReadAllCarReservationsArn:
+    Description: ARN of the ReadAllCarReservations lambda
+    Value: !GetAtt ReadAllCarReservations.Arn
+  CreateReservationLambdaArn:
+    Description: ARN of the CreateReservation lambda
+    Value: !GetAtt CreateReservation.Arn
+  UpdateReservationLambdaArn:
+    Description: ARN of the UpdateReservation lambda
+    Value: !GetAtt UpdateReservation.Arn
+  DeleteReservationLambdaArn:
+    Description: ARN of the DeleteReservation lambda
+    Value: !GetAtt DeleteReservation.Arn
+
+  ReadCarLambdaArn:
+    Description: ARN of the ReadCar lambda
+    Value: !GetAtt ReadCar.Arn
+  CreateCarLambdaArn:
+    Description: ARN of the CreateCar lambda
+    Value: !GetAtt CreateCar.Arn
+  UpdateCarLambdaArn:
+    Description: ARN of the UpdateCar lambda
+    Value: !GetAtt UpdateCar.Arn
+  DeleteCarLambdaArn:
+    Description: ARN of the DeleteCar lambda
+    Value: !GetAtt DeleteCar.Arn

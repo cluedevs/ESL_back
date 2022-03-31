@@ -1,0 +1,259 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Provisions IAM roles for use by Lambda functions to eliminate race condition
+
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+
+  usersTableName:
+    Description: Users table name
+    Type: String
+
+  reservationsTableName:
+    Description: Reservations table name
+    Type: String
+
+  carsTableName:
+    Description: Cars table name
+    Type: String
+
+Resources:
+  WriteUsersLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "write-user-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${usersTableName}*"
+
+  ReadUserLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "read-user-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:GetRecords
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${usersTableName}*"
+
+  WriteReservationsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "write-reservation-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${reservationsTableName}*"
+
+  ReadReservationsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "read-reservation-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:GetRecords
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${reservationsTableName}*"
+
+  WriteCarsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "write-car-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${carsTableName}*"
+
+  ReadCarsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "read-car-lambda-role-${environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: RequiredLambdaPermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:GetRecords
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${carsTableName}*"
+
+Outputs:
+  WriteUsersLambdaRoleArn:
+    Description: ARN of the WriteUsersLambdaRole
+    Value: !GetAtt WriteUsersLambdaRole.Arn
+
+  ReadUsersLambdaRoleArn:
+    Description: ARN of the ReadUserLambdaRole
+    Value: !GetAtt ReadUserLambdaRole.Arn
+
+  WriteReservationsLambdaRoleArn:
+    Description: ARN of the WriteReservationsLambdaRole
+    Value: !GetAtt WriteReservationsLambdaRole.Arn
+
+  ReadReservationsLambdaRoleArn:
+    Description: ARN of the ReadReservationsLambdaRole
+    Value: !GetAtt ReadReservationsLambdaRole.Arn
+
+  WriteCarsLambdaRoleArn:
+    Description: ARN of the WriteCarsLambdaRole
+    Value: !GetAtt WriteCarsLambdaRole.Arn
+
+  ReadCarsLambdaRoleArn:
+    Description: ARN of the ReadCarsLambdaRole
+    Value: !GetAtt ReadCarsLambdaRole.Arn

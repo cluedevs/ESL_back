@@ -40,7 +40,8 @@ Dynamo DB is the chosen tech to store the data because it is easy to scale, flex
 **Car**
 
 - carId (PK)
-- brand (SK)
+- category (SK)
+- brand
 - model
 - license
 - pictures (object key + bucket where car’s pictures are stored)
