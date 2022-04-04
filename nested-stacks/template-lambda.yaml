@@ -43,6 +43,15 @@ Parameters:
     Description: Role arn to read data on reservations table
     Type: String
 
+Globals:
+  Function:
+    Runtime: python3.8
+    MemorySize: 256
+    Timeout: 60
+    Handler: lambda_function.lambda_handler
+    Layers:
+      - !Ref CommonLayer
+
 Resources:
   ## COMMON LAYER TO INTERACT WITH DYNAMO
   CommonLayer:
@@ -60,28 +69,20 @@ Resources:
     Properties:
       CodeUri: ../lambda/user/get
       FunctionName: !Sub "read-user-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           USERS_TABLE: !Ref usersTableName
-      Description: Read user data
-      MemorySize: 256
-      Timeout: 60
+      Description: Read user dataå
       Role: !Ref readUsersLambdaRoleArn
   CreateUser:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../lambda/user/create
       FunctionName: !Sub "create-user-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           USERS_TABLE: !Ref usersTableName
       Description: Creates new user Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeUsersLambdaRoleArn
 
   UpdateUser:
@@ -89,14 +90,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/user/update
       FunctionName: !Sub "update-user-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           USERS_TABLE: !Ref usersTableName
       Description: Updates user data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeUsersLambdaRoleArn
 
   DeleteUser:
@@ -104,14 +101,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/user/delete
       FunctionName: !Sub "delete-user-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           USERS_TABLE: !Ref usersTableName
       Description: Creates new user Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeUsersLambdaRoleArn
 
   ## LAMBDA FUNCTION RESERVATION IMPLEMENTATIONS ##
@@ -120,14 +113,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/reservation/get
       FunctionName: !Sub "read-reservation-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
       Description: Read reservation data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref readReservationLambdaRoleArn
 
   ReadAllCarReservations:
@@ -135,14 +124,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/reservation/getAll
       FunctionName: !Sub "read-all-car-reservations-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
       Description: Read reservation data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref readReservationLambdaRoleArn
 
   CreateReservation:
@@ -150,14 +135,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/reservation/create
       FunctionName: !Sub "create-reservation-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
       Description: Creates new reservation Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeReservationLambdaRoleArn
 
   UpdateReservation:
@@ -165,14 +146,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/reservation/update
       FunctionName: !Sub "update-reservation-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
       Description: Updates reservation data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeReservationLambdaRoleArn
 
   DeleteReservation:
@@ -180,14 +157,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/reservation/delete
       FunctionName: !Sub "delete-reservation-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
       Description: Creates new reservation Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeReservationLambdaRoleArn
 
   ## LAMBDA FUNCTION CAR IMPLEMENTATIONS ##
@@ -196,14 +169,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/car/get
       FunctionName: !Sub "read-car-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           CARS_TABLE: !Ref carsTableName
       Description: Read car data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref readCarLambdaRoleArn
 
   ReadCars:
@@ -211,14 +180,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/car/getAll
       FunctionName: !Sub "read-cars-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           CARS_TABLE: !Ref carsTableName
       Description: Read car data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref readCarLambdaRoleArn
 
   CreateCar:
@@ -226,14 +191,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/car/create
       FunctionName: !Sub "create-car-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           CARS_TABLE: !Ref carsTableName
       Description: Creates new car Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeCarLambdaRoleArn
 
   UpdateCar:
@@ -241,14 +202,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/car/update
       FunctionName: !Sub "update-car-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           CARS_TABLE: !Ref carsTableName
       Description: Updates car data
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeCarLambdaRoleArn
 
   DeleteCar:
@@ -256,14 +213,10 @@ Resources:
     Properties:
       CodeUri: ../lambda/car/delete
       FunctionName: !Sub "delete-car-lambda-${environment}"
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.8
       Environment:
         Variables:
           CARS_TABLE: !Ref carsTableName
       Description: Creates new car Entity
-      MemorySize: 256
-      Timeout: 60
       Role: !Ref writeCarLambdaRoleArn
 
 Outputs:
