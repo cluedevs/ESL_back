@@ -2,5 +2,9 @@
 	{
 		"ParameterKey": "environment",
 		"ParameterValue": "dev"
+	},
+	{
+		"ParameterKey": "artifactsBucket",
+		"ParameterValue": "rental-car-artifacts"
 	}
 ]

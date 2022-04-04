@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: Provisions Lambda function & IAM roles that will create S3 access points
+Description: Provisions Lambda function to implement the endpoints
 
 Parameters:
   environment:
@@ -44,6 +44,16 @@ Parameters:
     Type: String
 
 Resources:
+  ## COMMON LAYER TO INTERACT WITH DYNAMO
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../layers
+      Description: Common layer to interact with dynamo
+      LayerName: !Sub "rental-common-layer-${environment}"
+      RetentionPolicy: Retain
+      CompatibleRuntimes: python3.8
+
   ## LAMBDA FUNCTION USER IMPLEMENTATIONS ##
   ReadUser:
     Type: AWS::Serverless::Function
@@ -59,7 +69,6 @@ Resources:
       MemorySize: 256
       Timeout: 60
       Role: !Ref readUsersLambdaRoleArn
-
   CreateUser:
     Type: AWS::Serverless::Function
     Properties:
@@ -191,7 +200,22 @@ Resources:
       Runtime: python3.8
       Environment:
         Variables:
-          RESERVATIONS_TABLE: !Ref carsTableName
+          CARS_TABLE: !Ref carsTableName
+      Description: Read car data
+      MemorySize: 256
+      Timeout: 60
+      Role: !Ref readCarLambdaRoleArn
+
+  ReadCars:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambda/car/getAll
+      FunctionName: !Sub "read-cars-lambda-${environment}"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          CARS_TABLE: !Ref carsTableName
       Description: Read car data
       MemorySize: 256
       Timeout: 60
@@ -206,7 +230,7 @@ Resources:
       Runtime: python3.8
       Environment:
         Variables:
-          RESERVATIONS_TABLE: !Ref carsTableName
+          CARS_TABLE: !Ref carsTableName
       Description: Creates new car Entity
       MemorySize: 256
       Timeout: 60
@@ -221,7 +245,7 @@ Resources:
       Runtime: python3.8
       Environment:
         Variables:
-          RESERVATIONS_TABLE: !Ref carsTableName
+          CARS_TABLE: !Ref carsTableName
       Description: Updates car data
       MemorySize: 256
       Timeout: 60
@@ -236,7 +260,7 @@ Resources:
       Runtime: python3.8
       Environment:
         Variables:
-          RESERVATIONS_TABLE: !Ref carsTableName
+          CARS_TABLE: !Ref carsTableName
       Description: Creates new car Entity
       MemorySize: 256
       Timeout: 60
@@ -275,6 +299,9 @@ Outputs:
   ReadCarLambdaArn:
     Description: ARN of the ReadCar lambda
     Value: !GetAtt ReadCar.Arn
+  ReadCarsLambdaArn:
+    Description: ARN of the ReadCars lambda
+    Value: !GetAtt ReadCars.Arn
   CreateCarLambdaArn:
     Description: ARN of the CreateCar lambda
     Value: !GetAtt CreateCar.Arn

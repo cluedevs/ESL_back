@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+  artifactsBucket:
+    Type: String
+Resources:
+  TablesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/32c60250d48e3ae031aa2bcfcbf87af8.template
+      Parameters:
+        environment:
+          Ref: environment
+    Metadata:
+      SamResourceId: TablesStack
+  RolesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/706e5c3476638604e00c04833a1470e2.template
+      Parameters:
+        environment:
+          Ref: environment
+        usersTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.usersTableName
+        reservationsTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.reservationsTableName
+        carsTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.carsTableName
+    Metadata:
+      SamResourceId: RolesStack
+  LambdaHandlerStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/2e22a450e527bc34eacbdc2e1cf1bc33.template
+      Parameters:
+        environment:
+          Ref: environment
+        usersTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.usersTableName
+        writeUsersLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.WriteUsersLambdaRoleArn
+        readUsersLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.ReadUsersLambdaRoleArn
+        reservationsTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.reservationsTableName
+        writeReservationLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.WriteReservationsLambdaRoleArn
+        readReservationLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.ReadReservationsLambdaRoleArn
+        carsTableName:
+          Fn::GetAtt:
+          - TablesStack
+          - Outputs.carsTableName
+        writeCarLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.WriteCarsLambdaRoleArn
+        readCarLambdaRoleArn:
+          Fn::GetAtt:
+          - RolesStack
+          - Outputs.ReadCarsLambdaRoleArn
+    Metadata:
+      SamResourceId: LambdaHandlerStack
+  APIStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: LambdaHandlerStack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/88f0b0e389cb65e5240f83070b2ce0d2.template
+      Parameters:
+        environment:
+          Ref: environment
+        artifactsBucket:
+          Ref: artifactsBucket
+        readUserLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.ReadUserLambdaArn
+        createUserLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.CreateUserLambdaArn
+        updateUserLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.UpdateUserLambdaArn
+        deleteUserLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.DeleteUserLambdaArn
+        readReservationLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.ReadReservationLambdaArn
+        readAllCarReservationsArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.ReadAllCarReservationsArn
+        createReservationLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.CreateReservationLambdaArn
+        updateReservationLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.UpdateReservationLambdaArn
+        deleteReservationLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.DeleteReservationLambdaArn
+        readCarLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.ReadCarLambdaArn
+        readCarsLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.ReadCarsLambdaArn
+        createCarLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.CreateCarLambdaArn
+        updateCarLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.UpdateCarLambdaArn
+        deleteCarLambdaArn:
+          Fn::GetAtt:
+          - LambdaHandlerStack
+          - Outputs.DeleteCarLambdaArn
+    Metadata:
+      SamResourceId: APIStack

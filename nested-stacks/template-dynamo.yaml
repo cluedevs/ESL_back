@@ -61,7 +61,9 @@ Resources:
 Outputs:
   usersTableName:
     Value: !Ref UsersTable
+
   reservationsTableName:
     Value: !Ref ReservationsTable
+
   carsTableName:
     Value: !Ref CarsTable

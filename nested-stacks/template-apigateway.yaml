@@ -9,7 +9,7 @@ Parameters:
 
   artifactsBucket:
     Description: Name of the s3 bucket where artifacts are stored
-    Type: AWS::SSM::Parameter::Value<String>
+    Type: String
 
   readUserLambdaArn:
     Type: String
@@ -39,6 +39,9 @@ Parameters:
     Type: String
 
   readCarLambdaArn:
+    Type: String
+
+  readCarsLambdaArn:
     Type: String
 
   createCarLambdaArn:
@@ -149,6 +152,14 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars/*"
+
+  ReadCarsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref readCarsLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars"
 
   CreateCarPermission:
     Type: AWS::Lambda::Permission

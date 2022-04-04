@@ -5,6 +5,9 @@ Parameters:
     Description: Environment to use.
     Type: String
 
+  artifactsBucket:
+    Type: String
+
 Resources:
   ## TABLES ##
   TablesStack:
@@ -21,28 +24,36 @@ Resources:
       TemplateURL: ./nested-stacks/template-roles.yaml
       Parameters:
         environment: !Ref environment
-        usersTableName: !Ref TablesStack.usersTableName
-        reservationsTableName: !Ref TablesStack.reservationsTableName
-        carsTableName: !Ref TablesStack.carsTableName
+        usersTableName: !GetAtt [TablesStack, Outputs.usersTableName]
+        reservationsTableName:
+          !GetAtt [TablesStack, Outputs.reservationsTableName]
+        carsTableName: !GetAtt [TablesStack, Outputs.carsTableName]
 
-  ## LAMBDA FUNCTIONS ##
+  # ## LAMBDA FUNCTIONS ##
   LambdaHandlerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: ./nested-stacks/template-lambda.yaml
       Parameters:
         environment: !Ref environment
-        usersTableName: !Ref TablesStack.usersTableName
-        writeUsersLambdaRoleArn: !Ref RolesStack.WriteUsersLambdaRoleArn
-        readUsersLambdaRoleArn: !Ref RolesStack.ReadUsersLambdaRoleArn
-        reservationsTableName: !Ref TablesStack.reservationsTableName
-        writeReservationLambdaRoleArn: !Ref RolesStack.WriteReservationsLambdaRoleArn
-        readReservationLambdaRoleArn: !Ref RolesStack.ReadReservationsLambdaRoleArn
-        carsTableName: !Ref TablesStack.carsTableName
-        writeCarLambdaRoleArn: !Ref RolesStack.WriteCarsLambdaRoleArn
-        readCarLambdaRoleArn: !Ref RolesStack.ReadCarsLambdaRoleArn
+        usersTableName: !GetAtt [TablesStack, Outputs.usersTableName]
+        writeUsersLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.WriteUsersLambdaRoleArn]
+        readUsersLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.ReadUsersLambdaRoleArn]
+        reservationsTableName:
+          !GetAtt [TablesStack, Outputs.reservationsTableName]
+        writeReservationLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.WriteReservationsLambdaRoleArn]
+        readReservationLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.ReadReservationsLambdaRoleArn]
+        carsTableName: !GetAtt [TablesStack, Outputs.carsTableName]
+        writeCarLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.WriteCarsLambdaRoleArn]
+        readCarLambdaRoleArn:
+          !GetAtt [RolesStack, Outputs.ReadCarsLambdaRoleArn]
 
-  ## API GATEWAY AND RELATED RESOURCES ##
+  # ## API GATEWAY AND RELATED RESOURCES ##
   APIStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: LambdaHandlerStack
@@ -50,16 +61,31 @@ Resources:
       TemplateURL: ./nested-stacks/template-apigateway.yaml
       Parameters:
         environment: !Ref environment
-        readUserLambdaArn: !Ref LambdaHandlerStack.ReadUserLambdaArn
-        createUserLambdaArn: !Ref LambdaHandlerStack.CreateUserLambdaArn
-        updateUserLambdaArn: !Ref LambdaHandlerStack.UpdateUserLambdaArn
-        deleteUserLambdaArn: !Ref LambdaHandlerStack.DeleteUserLambdaArn
-        readReservationLambdaArn: !Ref LambdaHandlerStack.ReadReservationLambdaArn
-        readAllCarReservationsArn: !Ref LambdaHandlerStack.ReadAllCarReservationsArn
-        createReservationLambdaArn: !Ref LambdaHandlerStack.CreateReservationLambdaArn
-        updateReservationLambdaArn: !Ref LambdaHandlerStack.UpdateReservationLambdaArn
-        deleteReservationLambdaArn: !Ref LambdaHandlerStack.DeleteReservationLambdaArn
-        readCarLambdaArn: !Ref LambdaHandlerStack.ReadCarLambdaArn
-        createCarLambdaArn: !Ref LambdaHandlerStack.CreateCarLambdaArn
-        updateCarLambdaArn: !Ref LambdaHandlerStack.UpdateCarLambdaArn
-        deleteCarLambdaArn: !Ref LambdaHandlerStack.DeleteCarLambdaArn
+        artifactsBucket: !Ref artifactsBucket
+        readUserLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.ReadUserLambdaArn]
+        createUserLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.CreateUserLambdaArn]
+        updateUserLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.UpdateUserLambdaArn]
+        deleteUserLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.DeleteUserLambdaArn]
+        readReservationLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.ReadReservationLambdaArn]
+        readAllCarReservationsArn:
+          !GetAtt [LambdaHandlerStack, Outputs.ReadAllCarReservationsArn]
+        createReservationLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.CreateReservationLambdaArn]
+        updateReservationLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.UpdateReservationLambdaArn]
+        deleteReservationLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.DeleteReservationLambdaArn]
+        readCarLambdaArn: !GetAtt [LambdaHandlerStack, Outputs.ReadCarLambdaArn]
+        readCarsLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.ReadCarsLambdaArn]
+        createCarLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.CreateCarLambdaArn]
+        updateCarLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.UpdateCarLambdaArn]
+        deleteCarLambdaArn:
+          !GetAtt [LambdaHandlerStack, Outputs.DeleteCarLambdaArn]
