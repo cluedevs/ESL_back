@@ -63,6 +63,10 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref gatewayStageName
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
       Name: !Sub "rental-car-api-gateway-${environment}"
       Description:
       EndpointConfiguration:
@@ -72,6 +76,19 @@ Resources:
           Name: AWS::Include
           Parameters:
             Location: !Sub "s3://${artifactsBucket}/api-gateway-openapi.yaml"
+      Auth:
+        DefaultAuthorizer: MyLambdaTokenAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: False
+        Authorizers: 
+          MyLambdaTokenAuthorizer:
+            FunctionArn: !GetAtt Auth0ValidatorFunction.Arn
+
+  Auth0ValidatorFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: auth0Validator.handler
+      Runtime: nodejs12.x
+      CodeUri: ../auth0
 
   ReadUserPermission:
     Type: AWS::Lambda::Permission
