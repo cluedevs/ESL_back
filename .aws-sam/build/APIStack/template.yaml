@@ -1,0 +1,189 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Provisions data lake API gateway
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+  artifactsBucket:
+    Description: Name of the s3 bucket where artifacts are stored
+    Type: String
+  readUserLambdaArn:
+    Type: String
+  createUserLambdaArn:
+    Type: String
+  updateUserLambdaArn:
+    Type: String
+  deleteUserLambdaArn:
+    Type: String
+  readReservationLambdaArn:
+    Type: String
+  readAllCarReservationsArn:
+    Type: String
+  createReservationLambdaArn:
+    Type: String
+  updateReservationLambdaArn:
+    Type: String
+  deleteReservationLambdaArn:
+    Type: String
+  readCarLambdaArn:
+    Type: String
+  readCarsLambdaArn:
+    Type: String
+  createCarLambdaArn:
+    Type: String
+  updateCarLambdaArn:
+    Type: String
+  deleteCarLambdaArn:
+    Type: String
+  gatewayStageName:
+    Description: The stage that should be deployed with the gateway
+    Type: String
+    Default: PRE
+Resources:
+  RentalCarApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: gatewayStageName
+      Name:
+        Fn::Sub: rental-car-api-gateway-${environment}
+      Description: null
+      EndpointConfiguration:
+        Type: REGIONAL
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location:
+              Fn::Sub: s3://${artifactsBucket}/api-gateway-openapi.yaml
+  ReadUserPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: readUserLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/users/*
+  CreateUserPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: createUserLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/POST/api/v1/users
+  UpdateUserPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: updateUserLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/PUT/api/v1/users/*
+  DeleteUserPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: deleteUserLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/DELETE/api/v1/users/*
+  ReadReservationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: readReservationLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars/*/reservations/*
+  ReadAllCarReservationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: readAllCarReservationsArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars/*/reservations
+  CreateReservationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: createReservationLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/POST/api/v1/cars/*/reservations
+  UpdateReservationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: updateReservationLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/PUT/api/v1/cars/*/reservations/*
+  DeleteReservationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: deleteReservationLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/DELETE/api/v1/cars/*/reservations/*
+  ReadCarPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: readCarLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars/*
+  ReadCarsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: readCarsLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/GET/api/v1/cars
+  CreateCarPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: createCarLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/POST/api/v1/cars
+  UpdateCarPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: updateCarLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/PUT/api/v1/cars/*
+  DeleteCarPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: deleteCarLambdaArn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RentalCarApiGateway}/*/DELETE/api/v1/cars/*
+Outputs:
+  APIEndpoint:
+    Value:
+      Fn::Sub: https://${RentalCarApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${gatewayStageName}/

@@ -6,7 +6,10 @@ echo $API_ARTIFACTS_BUCKET
 echo "Copying openapi definition to ${API_ARTIFACTS_BUCKET}..."
 aws s3 cp ./api/api-gateway-openapi.yaml s3://${API_ARTIFACTS_BUCKET}/
 
-sam package --template-file ./template.yaml --s3-bucket rental-car-artifacts --s3-prefix rental-car --output-template-file out/template.yaml
+# Install dependencies
+sam build
+
+sam package --template-file ./.aws-sam/build/template.yaml --s3-bucket rental-car-artifacts --s3-prefix rental-car --output-template-file out/template.yaml
 
 aws cloudformation deploy --stack-name rental-car-api-stack-dev --template-file out/template.yaml \
                 --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM --parameter-overrides file://parameters-dev.json 

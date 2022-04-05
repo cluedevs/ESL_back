@@ -1,0 +1,351 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Provisions Lambda function to implement the endpoints
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+  usersTableName:
+    Description: DynamoDB table to store users data
+    Type: String
+  writeUsersLambdaRoleArn:
+    Description: Role arn to write data on users table
+    Type: String
+  readUsersLambdaRoleArn:
+    Description: Role arn to read data on users table
+    Type: String
+  reservationsTableName:
+    Description: DynamoDB table to store reservations data
+    Type: String
+  writeReservationLambdaRoleArn:
+    Description: Role arn to write data on reservations table
+    Type: String
+  readReservationLambdaRoleArn:
+    Description: Role arn to read data on reservations table
+    Type: String
+  carsTableName:
+    Description: DynamoDB table to store reservations data
+    Type: String
+  writeCarLambdaRoleArn:
+    Description: Role arn to write data on reservations table
+    Type: String
+  readCarLambdaRoleArn:
+    Description: Role arn to read data on reservations table
+    Type: String
+Globals:
+  Function:
+    Runtime: python3.9
+    MemorySize: 256
+    Timeout: 60
+    Handler: lambda_function.lambda_handler
+    Layers:
+    - Ref: CommonLayer
+Resources:
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: CommonLayer
+      Description: Common layer to interact with dynamo
+      LayerName:
+        Fn::Sub: rental-common-layer-${environment}
+      RetentionPolicy: Retain
+      CompatibleRuntimes:
+      - python3.9
+    Metadata:
+      BuildMethod: python3.9
+      SamResourceId: CommonLayer
+  ReadUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReadUser
+      FunctionName:
+        Fn::Sub: read-user-lambda-${environment}
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTableName
+      Description: "Read user data\xE5"
+      Role:
+        Ref: readUsersLambdaRoleArn
+    Metadata:
+      SamResourceId: ReadUser
+  CreateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateUser
+      FunctionName:
+        Fn::Sub: create-user-lambda-${environment}
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTableName
+      Description: Creates new user Entity
+      Role:
+        Ref: writeUsersLambdaRoleArn
+    Metadata:
+      SamResourceId: CreateUser
+  UpdateUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UpdateUser
+      FunctionName:
+        Fn::Sub: update-user-lambda-${environment}
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTableName
+      Description: Updates user data
+      Role:
+        Ref: writeUsersLambdaRoleArn
+    Metadata:
+      SamResourceId: UpdateUser
+  DeleteUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DeleteUser
+      FunctionName:
+        Fn::Sub: delete-user-lambda-${environment}
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTableName
+      Description: Creates new user Entity
+      Role:
+        Ref: writeUsersLambdaRoleArn
+    Metadata:
+      SamResourceId: DeleteUser
+  ReadReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReadReservation
+      FunctionName:
+        Fn::Sub: read-reservation-lambda-${environment}
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE:
+            Ref: reservationsTableName
+      Description: Read reservation data
+      Role:
+        Ref: readReservationLambdaRoleArn
+    Metadata:
+      SamResourceId: ReadReservation
+  ReadAllCarReservations:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReadAllCarReservations
+      FunctionName:
+        Fn::Sub: read-all-car-reservations-lambda-${environment}
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE:
+            Ref: reservationsTableName
+      Description: Read reservation data
+      Role:
+        Ref: readReservationLambdaRoleArn
+    Metadata:
+      SamResourceId: ReadAllCarReservations
+  CreateReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateReservation
+      FunctionName:
+        Fn::Sub: create-reservation-lambda-${environment}
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE:
+            Ref: reservationsTableName
+      Description: Creates new reservation Entity
+      Role:
+        Ref: writeReservationLambdaRoleArn
+    Metadata:
+      SamResourceId: CreateReservation
+  UpdateReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UpdateReservation
+      FunctionName:
+        Fn::Sub: update-reservation-lambda-${environment}
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE:
+            Ref: reservationsTableName
+      Description: Updates reservation data
+      Role:
+        Ref: writeReservationLambdaRoleArn
+    Metadata:
+      SamResourceId: UpdateReservation
+  DeleteReservation:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DeleteReservation
+      FunctionName:
+        Fn::Sub: delete-reservation-lambda-${environment}
+      Environment:
+        Variables:
+          RESERVATIONS_TABLE:
+            Ref: reservationsTableName
+      Description: Creates new reservation Entity
+      Role:
+        Ref: writeReservationLambdaRoleArn
+    Metadata:
+      SamResourceId: DeleteReservation
+  ReadCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReadCar
+      FunctionName:
+        Fn::Sub: read-car-lambda-${environment}
+      Environment:
+        Variables:
+          CARS_TABLE:
+            Ref: carsTableName
+      Description: Read car data
+      Role:
+        Ref: readCarLambdaRoleArn
+    Metadata:
+      SamResourceId: ReadCar
+  ReadCars:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ReadCars
+      FunctionName:
+        Fn::Sub: read-cars-lambda-${environment}
+      Environment:
+        Variables:
+          CARS_TABLE:
+            Ref: carsTableName
+      Description: Read car data
+      Role:
+        Ref: readCarLambdaRoleArn
+    Metadata:
+      SamResourceId: ReadCars
+  CreateCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateCar
+      FunctionName:
+        Fn::Sub: create-car-lambda-${environment}
+      Environment:
+        Variables:
+          CARS_TABLE:
+            Ref: carsTableName
+      Description: Creates new car Entity
+      Role:
+        Ref: writeCarLambdaRoleArn
+    Metadata:
+      SamResourceId: CreateCar
+  UpdateCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UpdateCar
+      FunctionName:
+        Fn::Sub: update-car-lambda-${environment}
+      Environment:
+        Variables:
+          CARS_TABLE:
+            Ref: carsTableName
+      Description: Updates car data
+      Role:
+        Ref: writeCarLambdaRoleArn
+    Metadata:
+      SamResourceId: UpdateCar
+  DeleteCar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DeleteCar
+      FunctionName:
+        Fn::Sub: delete-car-lambda-${environment}
+      Environment:
+        Variables:
+          CARS_TABLE:
+            Ref: carsTableName
+      Description: Creates new car Entity
+      Role:
+        Ref: writeCarLambdaRoleArn
+    Metadata:
+      SamResourceId: DeleteCar
+Outputs:
+  ReadUserLambdaArn:
+    Description: ARN of the ReadUser lambda
+    Value:
+      Fn::GetAtt:
+      - ReadUser
+      - Arn
+  CreateUserLambdaArn:
+    Description: ARN of the CreateUser lambda
+    Value:
+      Fn::GetAtt:
+      - CreateUser
+      - Arn
+  UpdateUserLambdaArn:
+    Description: ARN of the UpdateUser lambda
+    Value:
+      Fn::GetAtt:
+      - UpdateUser
+      - Arn
+  DeleteUserLambdaArn:
+    Description: ARN of the DeleteUser lambda
+    Value:
+      Fn::GetAtt:
+      - DeleteUser
+      - Arn
+  ReadReservationLambdaArn:
+    Description: ARN of the ReadReservation lambda
+    Value:
+      Fn::GetAtt:
+      - ReadReservation
+      - Arn
+  ReadAllCarReservationsArn:
+    Description: ARN of the ReadAllCarReservations lambda
+    Value:
+      Fn::GetAtt:
+      - ReadAllCarReservations
+      - Arn
+  CreateReservationLambdaArn:
+    Description: ARN of the CreateReservation lambda
+    Value:
+      Fn::GetAtt:
+      - CreateReservation
+      - Arn
+  UpdateReservationLambdaArn:
+    Description: ARN of the UpdateReservation lambda
+    Value:
+      Fn::GetAtt:
+      - UpdateReservation
+      - Arn
+  DeleteReservationLambdaArn:
+    Description: ARN of the DeleteReservation lambda
+    Value:
+      Fn::GetAtt:
+      - DeleteReservation
+      - Arn
+  ReadCarLambdaArn:
+    Description: ARN of the ReadCar lambda
+    Value:
+      Fn::GetAtt:
+      - ReadCar
+      - Arn
+  ReadCarsLambdaArn:
+    Description: ARN of the ReadCars lambda
+    Value:
+      Fn::GetAtt:
+      - ReadCars
+      - Arn
+  CreateCarLambdaArn:
+    Description: ARN of the CreateCar lambda
+    Value:
+      Fn::GetAtt:
+      - CreateCar
+      - Arn
+  UpdateCarLambdaArn:
+    Description: ARN of the UpdateCar lambda
+    Value:
+      Fn::GetAtt:
+      - UpdateCar
+      - Arn
+  DeleteCarLambdaArn:
+    Description: ARN of the DeleteCar lambda
+    Value:
+      Fn::GetAtt:
+      - DeleteCar
+      - Arn

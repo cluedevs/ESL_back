@@ -9,7 +9,7 @@ Resources:
   TablesStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/32c60250d48e3ae031aa2bcfcbf87af8.template
+      TemplateURL: TablesStack/template.yaml
       Parameters:
         environment:
           Ref: environment
@@ -18,7 +18,7 @@ Resources:
   RolesStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/706e5c3476638604e00c04833a1470e2.template
+      TemplateURL: RolesStack/template.yaml
       Parameters:
         environment:
           Ref: environment
@@ -39,7 +39,7 @@ Resources:
   LambdaHandlerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/732b83bb148f9927198a056561c1a0c2.template
+      TemplateURL: LambdaHandlerStack/template.yaml
       Parameters:
         environment:
           Ref: environment
@@ -85,7 +85,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: LambdaHandlerStack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/88f0b0e389cb65e5240f83070b2ce0d2.template
+      TemplateURL: APIStack/template.yaml
       Parameters:
         environment:
           Ref: environment

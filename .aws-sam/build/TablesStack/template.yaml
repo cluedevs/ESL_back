@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Contains StageC StateMachine Definition
+Parameters:
+  environment:
+    Description: Environment to use.
+    Type: String
+Resources:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: user_id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: user_id
+        KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName:
+        Fn::Sub: users-table-${environment}
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+  ReservationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: reservation_id
+        AttributeType: S
+      - AttributeName: user_id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: reservation_id
+        KeyType: HASH
+      - AttributeName: user_id
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName:
+        Fn::Sub: reservations-table-${environment}
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+  CarsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: car_id
+        AttributeType: S
+      - AttributeName: category
+        AttributeType: S
+      KeySchema:
+      - AttributeName: car_id
+        KeyType: HASH
+      - AttributeName: category
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName:
+        Fn::Sub: cars-table-${environment}
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+Outputs:
+  usersTableName:
+    Value:
+      Ref: UsersTable
+  reservationsTableName:
+    Value:
+      Ref: ReservationsTable
+  carsTableName:
+    Value:
+      Ref: CarsTable
