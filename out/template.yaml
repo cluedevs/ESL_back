@@ -39,7 +39,7 @@ Resources:
   LambdaHandlerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/732b83bb148f9927198a056561c1a0c2.template
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/a9e33998cec43f4f73605b5a9d341089.template
       Parameters:
         environment:
           Ref: environment
@@ -85,7 +85,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: LambdaHandlerStack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/88f0b0e389cb65e5240f83070b2ce0d2.template
+      TemplateURL: https://s3.amazonaws.com/rental-car-artifacts/rental-car/3d379c4e5dfefd2bf5438d9a889eaa9a.template
       Parameters:
         environment:
           Ref: environment

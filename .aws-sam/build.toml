@@ -127,6 +127,15 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["LambdaHandlerStack/DeleteCar"]
 
+[function_build_definitions.c6a279a0-b1e0-4faa-8b37-b734b66f836e]
+codeuri = "/Users/ederduran/Desktop/ESL_back/auth0"
+runtime = "nodejs12.x"
+architecture = "x86_64"
+handler = "auth0Validator.handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["APIStack/Auth0ValidatorFunction"]
+
 [layer_build_definitions]
 [layer_build_definitions.69783408-c688-4cc0-9a92-84a96acada03]
 layer_name = "LambdaHandlerStack/CommonLayer"

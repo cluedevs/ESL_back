@@ -79,16 +79,21 @@ Resources:
       Auth:
         DefaultAuthorizer: MyLambdaTokenAuthorizer
         AddDefaultAuthorizerToCorsPreflight: False
-        Authorizers: 
+        Authorizers:
           MyLambdaTokenAuthorizer:
             FunctionArn: !GetAtt Auth0ValidatorFunction.Arn
 
   Auth0ValidatorFunction:
-    Type: 'AWS::Serverless::Function'
+    Type: "AWS::Serverless::Function"
     Properties:
       Handler: auth0Validator.handler
       Runtime: nodejs12.x
       CodeUri: ../auth0
+      Environment:
+        Variables:
+          JSKS_URI: "https://dev-4pls1z4n.us.auth0.com/.well-known/jwks.json"
+          AUDIENCE: "https://rental-car-api.com/v1"
+          TOKEN_ISSUER: "https://dev-4pls1z4n.us.auth0.com/"
 
   ReadUserPermission:
     Type: AWS::Lambda::Permission

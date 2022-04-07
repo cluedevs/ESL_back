@@ -10,12 +10,17 @@ def rest_response(status_code: int, body: Dict = None, headers: Dict = None) -> 
     """
 
     response: Dict = {
-        'statusCode': status_code
+        'statusCode': status_code,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*'
+        }
     }
     if body is not None:
         response['body'] = json.dumps(body)
     if headers is not None:
-        response['headers'] = headers
+        response['headers'].update(headers)
     return response
 
 class RestApiWrapper:

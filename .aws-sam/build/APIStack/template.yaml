@@ -46,6 +46,10 @@ Resources:
     Properties:
       StageName:
         Ref: gatewayStageName
+      Cors:
+        AllowMethods: '''*'''
+        AllowHeaders: '''*'''
+        AllowOrigin: '''*'''
       Name:
         Fn::Sub: rental-car-api-gateway-${environment}
       Description: null
@@ -57,6 +61,28 @@ Resources:
           Parameters:
             Location:
               Fn::Sub: s3://${artifactsBucket}/api-gateway-openapi.yaml
+      Auth:
+        DefaultAuthorizer: MyLambdaTokenAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          MyLambdaTokenAuthorizer:
+            FunctionArn:
+              Fn::GetAtt:
+              - Auth0ValidatorFunction
+              - Arn
+  Auth0ValidatorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: auth0Validator.handler
+      Runtime: nodejs12.x
+      CodeUri: Auth0ValidatorFunction
+      Environment:
+        Variables:
+          JSKS_URI: https://dev-4pls1z4n.us.auth0.com/.well-known/jwks.json
+          AUDIENCE: https://rental-car-api.com/v1
+          TOKEN_ISSUER: https://dev-4pls1z4n.us.auth0.com/
+    Metadata:
+      SamResourceId: Auth0ValidatorFunction
   ReadUserPermission:
     Type: AWS::Lambda::Permission
     Properties:
