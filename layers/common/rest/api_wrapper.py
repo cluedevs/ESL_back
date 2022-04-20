@@ -44,7 +44,7 @@ class RestApiWrapper:
                                      body=generate_api_error_body(
                                          http_status=HTTPStatus.NOT_FOUND,
                                          message='Not Found',
-                                         details=f"Flag with key '{e.value}' not found.' "))
+                                         details=f"Value with key '{e.value}' not found.' "))
             except NotPermittedException as e:
                 print("Handling not permitted error")
                 return rest_response(status_code=HTTPStatus.FORBIDDEN,
