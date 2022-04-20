@@ -11,7 +11,7 @@ user_dao: UserDAO = UserDAO()
 def lambda_handler(event: Dict, context):
     user_payload, user_id = get_lambda_inputs(event)
     # Persist User
-    user = User(user_id, user_payload.user_email, user_payload.get('name', None) , user_payload.get('age', None))
+    user = User(user_id, user_payload.get('user_email'), user_payload.get('name', None) , user_payload.get('age', None))
     persisted_user, is_create = user_dao.set(user)
     return rest_response(status_code=HTTPStatus.CREATED if is_create else HTTPStatus.OK,
                          body=persisted_user.as_api_dict())

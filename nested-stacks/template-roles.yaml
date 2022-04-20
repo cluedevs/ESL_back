@@ -53,6 +53,7 @@ Resources:
                   - dynamodb:UpdateItem
                   - dynamodb:PutItem
                   - dynamodb:DeleteItem
+                  - dynamodb:GetItem
                 Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${usersTableName}*"
 
   ReadUserLambdaRole:
