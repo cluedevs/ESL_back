@@ -12,6 +12,7 @@ class DbUserAttrNames():
     USER_ID = 'user_id'
     USER_EMAIL = 'user_email'
     MODIFIED = 'modified'
+    CREATED = 'created'
 
 @dataclass(init=False)
 class User:
@@ -84,3 +85,15 @@ class User:
                     age=age,
                     created=created,
                     modified=modified)
+    
+    def as_api_dict(self) -> Dict:
+        """Returns a dict that can be serialized as JSON to return in api"""
+        user: Dict = {
+            DbUserAttrNames.USER_ID: self.user_id,
+            DbUserAttrNames.USER_EMAIL: self.user_email,
+            'name': self.name,
+            'age': self.age,
+            DbUserAttrNames.CREATED: self.created,
+            DbUserAttrNames.MODIFIED: self.modified
+        }
+        return user
