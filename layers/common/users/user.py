@@ -1,20 +1,22 @@
 import uuid
 from dataclasses import dataclass
 from typing import Optional, Dict
+from datetime import datetime, timezone
 from common.rest.exceptions import BadParameterException
 
 
 class DbUserAttrNames():
     """
-    Database Attribute names to be used for Flag Definitions table.
+    Database Attribute names to be used for Users table.
     """
     USER_ID = 'user_id'
     USER_EMAIL = 'user_email'
+    MODIFIED = 'modified'
 
 @dataclass(init=False)
 class User:
     """
-    Encapsulates the representation of a Flag Definition.
+    Encapsulates the representation of a User.
     """
     user_id : str
     user_email: str
@@ -34,6 +36,14 @@ class User:
         self.user_email = user_email
         self.name = name
         self.age = age
+
+        if not created:
+            time = datetime.now()
+            created = time.astimezone(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+            modified = created
+
+        self.created = created
+        self.modified = modified
         self.created = created
         self.modified = modified
 
@@ -60,7 +70,7 @@ class User:
 
     @classmethod
     def from_db_dict(cls, db_item: dict):
-        """Returns the FlagValue instance populated from the database dict"""
+        """Returns the User instance populated from the database dict"""
         user_id = db_item.get(DbUserAttrNames.USER_ID)
         user_email = db_item.get(DbUserAttrNames.USER_EMAIL)
         name = db_item.get("name")
