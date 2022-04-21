@@ -76,7 +76,7 @@ class UserDAO:
                 partition_key="user_id", key=DbUserAttrNames.USER_ID, value=user_email,
                 details=f"No User was found for Partition Key user_id and user_email")
 
-        return user_id.from_db_dict(db_item=item)
+        return User.from_db_dict(db_item=item)
     
     def update(self, old_user: User, new_user: User) -> User:
         if not old_user:
