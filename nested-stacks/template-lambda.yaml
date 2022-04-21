@@ -130,6 +130,7 @@ Resources:
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
+          USERS_TABLE: !Ref usersTableName
       Description: Read reservation data
       Role: !Ref readReservationLambdaRoleArn
 
@@ -141,6 +142,7 @@ Resources:
       Environment:
         Variables:
           RESERVATIONS_TABLE: !Ref reservationsTableName
+          USERS_TABLE: !Ref usersTableName
       Description: Creates new reservation Entity
       Role: !Ref writeReservationLambdaRoleArn
 

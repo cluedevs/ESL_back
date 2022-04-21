@@ -1,8 +1,9 @@
 import uuid
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import List, Optional, Dict
 from datetime import datetime, timezone
 from common.rest.exceptions import BadParameterException
+from common.reservations.reservation import Reservation
 
 
 class DbUserAttrNames():
@@ -14,6 +15,7 @@ class DbUserAttrNames():
     MODIFIED = 'modified'
     CREATED = 'created'
 
+
 @dataclass(init=False)
 class User:
     """
@@ -23,10 +25,11 @@ class User:
     user_email: str
     name: str
     age: int
+    reservations: List[Reservation]
     created: str
     modified: str
 
-    def __init__(self, user_id: str, user_email: str, name: Optional[str] = None, age: Optional[int] = None, created: Optional[str] = None, modified: Optional[str] = None):
+    def __init__(self, user_id: str, user_email: str, name: Optional[str] = None, age: Optional[int] = None, reservations: Optional[List[Reservation]] = None, created: Optional[str] = None, modified: Optional[str] = None):
         if not user_id:
             raise BadParameterException(param_name="user_id",
                                         details='key must be provided')
@@ -37,6 +40,7 @@ class User:
         self.user_email = user_email
         self.name = name
         self.age = age
+        self.reservations = reservations
 
         if not created:
             time = datetime.now()
@@ -45,9 +49,16 @@ class User:
 
         self.created = created
         self.modified = modified
-        self.created = created
-        self.modified = modified
 
+
+    def add_reservations(self, reservation: Reservation):
+        if not self.reservations:
+            self.reservations = [reservation]
+        else:
+            self.reservations.append(reservation)
+        return self.reservations
+        
+        
     def as_db_dict(self) -> Dict:
         """Returns a dict that can be serialized as JSON to store in database"""
         user_dict: Dict = {
@@ -60,6 +71,9 @@ class User:
 
         if self.age:
             user_dict['age'] = self.age
+        
+        if self.reservations: 
+            user_dict['reservations'] = [reservation.as_db_dict() for reservation in self.reservations]
 
         if self.created:
             user_dict['created'] = self.created
@@ -69,6 +83,7 @@ class User:
 
         return user_dict
 
+
     @classmethod
     def from_db_dict(cls, db_item: dict):
         """Returns the User instance populated from the database dict"""
@@ -76,6 +91,7 @@ class User:
         user_email = db_item.get(DbUserAttrNames.USER_EMAIL)
         name = db_item.get("name")
         age = db_item.get("age")
+        reservations = db_item.get("reservations")
         created = db_item.get("created")
         modified = db_item.get("modified")
 
@@ -83,9 +99,11 @@ class User:
                     user_email=user_email,
                     name=name,
                     age=age,
+                    reservations=reservations,
                     created=created,
                     modified=modified)
     
+
     def as_api_dict(self) -> Dict:
         """Returns a dict that can be serialized as JSON to return in api"""
         user: Dict = {
@@ -93,6 +111,7 @@ class User:
             DbUserAttrNames.USER_EMAIL: self.user_email,
             'name': self.name,
             'age': self.age,
+            'reservations': self.reservations,
             DbUserAttrNames.CREATED: self.created,
             DbUserAttrNames.MODIFIED: self.modified
         }

@@ -125,7 +125,13 @@ Resources:
                   - dynamodb:UpdateItem
                   - dynamodb:PutItem
                   - dynamodb:DeleteItem
+                  - dynamodb:GetItem
                 Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${reservationsTableName}*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:GetItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${usersTableName}*"
 
   ReadReservationsLambdaRole:
     Type: AWS::IAM::Role
@@ -162,6 +168,12 @@ Resources:
                   - dynamodb:GetItem
                   - dynamodb:GetRecords
                 Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${reservationsTableName}*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:GetItem
+                  - dynamodb:GetRecords
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${usersTableName}*"
 
   WriteCarsLambdaRole:
     Type: AWS::IAM::Role

@@ -1,6 +1,6 @@
 import boto3
 import os
-from typing import Dict
+from typing import Dict, Optional
 from datetime import datetime, timezone
 from functools import cached_property
 from typing import Tuple
@@ -56,18 +56,18 @@ class UserDAO:
                                         value=user.user_email,
                                         details=f"User already exists for Partition Key")
     
-    def get(self, user_id: str, user_email: str) -> User:
+    def get(self, user_id: str, user_email: Optional[str] = None) -> User:
         if not user_id:
             raise BadParameterException(param_name=DbUserAttrNames.USER_ID, details="Missing or empty user_id")
-        
-        if not user_email:
-            raise BadParameterException(param_name=DbUserAttrNames.USER_EMAIL, details="Missing or empty user_email")
+
+        args = {
+            DbUserAttrNames.USER_ID: user_id
+        }
+        if user_email:
+            args[DbUserAttrNames.USER_EMAIL] = user_email
 
         response = self._dynamodb_resource_table.get_item(
-            Key={
-                DbUserAttrNames.USER_ID: user_id,
-                DbUserAttrNames.USER_EMAIL: user_email
-            }
+            Key=args
         )
         item = response.get("Item")
         if not item:
@@ -87,9 +87,11 @@ class UserDAO:
         # Check what actually needs to be updated
         age_changed: bool = old_user.age != new_user.age
         name_changed: bool = old_user.name != new_user.name
+        # TODO: Only work for add or remove reservations not to modify it
+        reservations_changed: bool = len(old_user.reservations) != len(new_user.reservations)
 
         # If nothing to update, return early
-        if not age_changed and not name_changed:
+        if not age_changed and not name_changed and not reservations_changed:
             print("Skipping update because there is nothing to update for User Id '%s', User email '%s'",
                 new_user.user_id, new_user.user_email)
             return new_user
@@ -112,6 +114,9 @@ class UserDAO:
         if age_changed:
             expression_attribute_values[':age'] = new_user.age
             update_expression += ", age=:age"
+        if reservations_changed:
+            expression_attribute_values[':reservations'] = new_user.reservations
+            update_expression += ", reservations=:reservations"
 
         kwargs = {
             "Key": {
