@@ -20,9 +20,9 @@ def lambda_handler(event: Dict, context):
                             phone=reservation_payload.get('phone', None),
                             car_type=reservation_payload.get('car_type', None),
                             description=reservation_payload.get('description', None))
-    persisted_reservation, is_create = reservation_dao.create(reservation)
-    return rest_response(status_code=HTTPStatus.CREATED if is_create else HTTPStatus.OK,
-                         body=persisted_reservation.as_api_dict())
+    user_email = reservation_payload.get('user_email')
+    reservation_dao.create(reservation, user_email)
+    return rest_response(status_code=HTTPStatus.CREATED , body=reservation.as_api_dict())
 
 
 def get_lambda_inputs(event: Dict) -> Dict:

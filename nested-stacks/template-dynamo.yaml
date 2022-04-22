@@ -32,15 +32,15 @@ Resources:
       AttributeDefinitions:
         - AttributeName: reservation_id
           AttributeType: S
-        - AttributeName: user_id
+        - AttributeName: reservation_user
           AttributeType: S
       KeySchema:
         - AttributeName: reservation_id
           KeyType: HASH
-        - AttributeName: user_id
+        - AttributeName: reservation_user
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-      TableName: !Sub reservations-table-${environment}
+      TableName: !Sub reservations-table-test-${environment}
     UpdateReplacePolicy: Retain
     DeletionPolicy: Delete
 

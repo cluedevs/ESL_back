@@ -33,7 +33,7 @@ class ReservationDAO:
     def _dynamodb_resource_table(self):
         return self._dynamodb_resource.Table(self._table_name)
 
-    def create(self, reservation: Reservation) -> None:
+    def create(self, reservation: Reservation, user_email) -> None:
         """
         Create a new Reservation record.
         """
@@ -51,7 +51,7 @@ class ReservationDAO:
             self._dynamodb_resource_table.put_item(**kwargs)
             # When create reservation also update the Users table
             user_dao = UserDAO()
-            old_user = user_dao.get(reservation.reservation_user)
+            old_user = user_dao.get(reservation.reservation_user, user_email)
             new_user = copy.deepcopy(old_user)
             new_user.add_reservations(reservation)
             user_dao.update(old_user, new_user)

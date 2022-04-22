@@ -1,4 +1,5 @@
 import json
+import traceback
 from typing import Dict
 from http import HTTPStatus
 from common.rest.exceptions import generate_api_error_body, RestException, AbstractException, DatabaseException, KeyNotFoundException, NotPermittedException
@@ -70,6 +71,7 @@ class RestApiWrapper:
                 print("Handling rest error")
                 return rest_response(e.http_status, e.to_api_error())
             except Exception as e:
+                print(traceback.format_exc())
                 print("Unexpected exception")
                 return rest_response(
                     HTTPStatus.INTERNAL_SERVER_ERROR,

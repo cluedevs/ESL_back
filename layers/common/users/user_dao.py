@@ -56,16 +56,14 @@ class UserDAO:
                                         value=user.user_email,
                                         details=f"User already exists for Partition Key")
     
-    def get(self, user_id: str, user_email: Optional[str] = None) -> User:
+    def get(self, user_id: str, user_email: str) -> User:
         if not user_id:
             raise BadParameterException(param_name=DbUserAttrNames.USER_ID, details="Missing or empty user_id")
 
         args = {
-            DbUserAttrNames.USER_ID: user_id
+            DbUserAttrNames.USER_ID: user_id,
+            DbUserAttrNames.USER_EMAIL: user_email
         }
-        if user_email:
-            args[DbUserAttrNames.USER_EMAIL] = user_email
-
         response = self._dynamodb_resource_table.get_item(
             Key=args
         )
@@ -88,7 +86,9 @@ class UserDAO:
         age_changed: bool = old_user.age != new_user.age
         name_changed: bool = old_user.name != new_user.name
         # TODO: Only work for add or remove reservations not to modify it
-        reservations_changed: bool = len(old_user.reservations) != len(new_user.reservations)
+        reservations_changed: bool = len(old_user.get_reservations()) != len(new_user.get_reservations())
+        if len(new_user.get_reservations()) == 0:
+            new_user.reservations = old_user.get_reservations()
 
         # If nothing to update, return early
         if not age_changed and not name_changed and not reservations_changed:
@@ -115,7 +115,7 @@ class UserDAO:
             expression_attribute_values[':age'] = new_user.age
             update_expression += ", age=:age"
         if reservations_changed:
-            expression_attribute_values[':reservations'] = new_user.reservations
+            expression_attribute_values[':reservations'] = [reservation.as_db_dict() for reservation in new_user.reservations]
             update_expression += ", reservations=:reservations"
 
         kwargs = {

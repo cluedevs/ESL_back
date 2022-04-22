@@ -29,7 +29,7 @@ class User:
     created: str
     modified: str
 
-    def __init__(self, user_id: str, user_email: str, name: Optional[str] = None, age: Optional[int] = None, reservations: Optional[List[Reservation]] = None, created: Optional[str] = None, modified: Optional[str] = None):
+    def __init__(self, user_id: str, user_email: str, name: Optional[str] = None, age: Optional[int] = None, reservations: Optional[List[Reservation]] = [], created: Optional[str] = None, modified: Optional[str] = None):
         if not user_id:
             raise BadParameterException(param_name="user_id",
                                         details='key must be provided')
@@ -56,6 +56,12 @@ class User:
             self.reservations = [reservation]
         else:
             self.reservations.append(reservation)
+        return self.reservations
+    
+
+    def get_reservations(self):
+        if not self.reservations:
+            return []
         return self.reservations
         
         
@@ -99,7 +105,7 @@ class User:
                     user_email=user_email,
                     name=name,
                     age=age,
-                    reservations=reservations,
+                    reservations=[ Reservation.from_db_dict(reservation) for reservation in reservations],
                     created=created,
                     modified=modified)
     
@@ -111,7 +117,7 @@ class User:
             DbUserAttrNames.USER_EMAIL: self.user_email,
             'name': self.name,
             'age': self.age,
-            'reservations': self.reservations,
+            'reservations': [ reservation.as_api_dict() for reservation in self.reservations],
             DbUserAttrNames.CREATED: self.created,
             DbUserAttrNames.MODIFIED: self.modified
         }
