@@ -97,7 +97,7 @@ class User:
         user_email = db_item.get(DbUserAttrNames.USER_EMAIL)
         name = db_item.get("name")
         age = db_item.get("age")
-        reservations = db_item.get("reservations")
+        reservations = db_item.get("reservations", [])
         created = db_item.get("created")
         modified = db_item.get("modified")
 

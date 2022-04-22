@@ -199,3 +199,7 @@ Dynamo DB is the chosen tech to store the data because it is easy to scale, flex
 > Delete reservation by id
 
 ---
+
+### Overall Architecture:
+
+![alt text](docs/ESL_Back%20Architecture.png)
